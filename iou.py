@@ -84,6 +84,6 @@ for i in bb_labeled:
     cv2.rectangle(img, (x, y), (w, h), (0, 0, 255), 1)
 
 
-
+print('teste')
 plt.imshow(img)
 plt.show()
