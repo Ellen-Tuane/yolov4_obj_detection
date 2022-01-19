@@ -1,23 +1,17 @@
 import os
 import cv2
 import matplotlib.pyplot as plt
-import numpy as np
-
-'''
-# DETECTED FILE NAME
-txt_name = os.listdir(dir_detected)
-for k in txt_name:
-    img_name = k.split("_")
-'''
-# IMAGE SIZE
-img = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
-im_h, im_w, _ = img.shape
+import pandas as pd
 
 #Predicted BBOX
 dir_predicted = '/home/ellentuane/Documents/IC/detected/960/1'
 lines = []
 
 for filename in os.listdir(dir_predicted):
+    # DETECTED FILE NAME
+    for k in filename:
+        img_name = filename.split("_")
+
     with open(os.path.join(dir_predicted, filename), "r") as files:
         for line in files:
             lines.append(line)
@@ -38,15 +32,6 @@ for i in lines:
     else:
         pass
 
-#print(bb_predicted)
-
-for bbp in bb_predicted:
-    x_predicted, y_predicted, w_predicted, h_predicted = bbp[0], bbp[1], bbp[2], bbp[3]
-    cv2.rectangle(img, (x_predicted, y_predicted), (w_predicted, h_predicted), (255, 0, 0), 2)
-
-#plt.imshow(img)
-#plt.show()
-
 # OPEN LABELED FILE AND SAVING LINES
 dir_labeled = '/home/ellentuane/Documents/IC/labeled/1'
 lines_labeled = []
@@ -57,6 +42,11 @@ for filename in os.listdir(dir_labeled):
             lines_labeled.append(line_labeled)
 
 # LABELED BOUNDING BOXES
+
+# IMAGE SIZE
+img = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
+im_h, im_w, _ = img.shape
+
 bb_labeled = []
 
 for l in lines_labeled:
@@ -68,31 +58,13 @@ for l in lines_labeled:
     x2 = int((x + w / 2) * im_w) # r
     y2 = int((y + h / 2) * im_h) # b
 
-    bb_labeled.append([x1, y1, x2, y2])
+    bb_labeled.append([x1, y1, x2, y2, 0])
 
-'''    if x1 < 0:
-        x1 = 0
-    if x2 > im_w - 1:
-        x2 = im_w - 1
-    if y1 < 0:
-        y1 = 0
-    if y2 > im_h - 1:
-        y2 = im_h - 1'''
+###     IOU
 
-### BBOXES LABELED AND PREDICTED
-for bbl in bb_labeled:
-    x_labeled, y_labeled, w_labeled, h_labeled = bbl[0], bbl[1], bbl[2], bbl[3]
-    cv2.rectangle(img, (x_labeled, y_labeled), (w_labeled, h_labeled), (0, 0, 255), 2)
-
-plt.imshow(img)
-plt.title('LABELED AND PREDICTED')
-plt.show()
-############
-
-previsoes = []
 previsao_TP = []
 previsao_FP = []
-FN = []
+Labeled_FN = []
 inter = []
 
 a = 0
@@ -119,13 +91,30 @@ while a < len(bb_predicted):
                 iou = 0
 
             if iou > 50:
+
                 boxA.append(iou)
                 boxB.append(iou)
+                #boxB.append(filename)
+                #boxB.append(img_name[2])
                 previsao_TP.append(boxB)
                 inter.append([boxA, boxB])
             else:
                 pass
         a += 1
+
+### BBOXES LABELED AND PREDICTED
+for bbl in bb_labeled:
+    x_labeled, y_labeled, w_labeled, h_labeled = bbl[0], bbl[1], bbl[2], bbl[3]
+    cv2.rectangle(img, (x_labeled, y_labeled), (w_labeled, h_labeled), (0, 0, 255), 2)
+
+for bbp in bb_predicted:
+    x_predicted, y_predicted, w_predicted, h_predicted = bbp[0], bbp[1], bbp[2], bbp[3]
+    cv2.rectangle(img, (x_predicted, y_predicted), (w_predicted, h_predicted), (255, 0, 0), 2)
+
+'''plt.imshow(img)
+plt.title('LABELED AND PREDICTED')
+plt.show()'''
+
 
 ### BBOXES INTERCEPTED
 img2 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
@@ -139,9 +128,9 @@ for i in inter:
     xxx, yyy, www, hhh = i[1][0], i[1][1], i[1][2], i[1][3]
     cv2.rectangle(img2, (xxx, yyy), (www, hhh), (255, 0, 0), 2)
 
-plt.imshow(img2)
+'''plt.imshow(img2)
 plt.title('True Positive')
-plt.show()
+plt.show()'''
 
 ### BBOXES FALSE POSITIVES ###
 
@@ -157,39 +146,56 @@ for fp in previsao_FP:
     x_fp, y_fp, w_fp, h_fp = fp[0], fp[1], fp[2], fp[3]
     cv2.rectangle(img3, (x_fp, y_fp), (w_fp, h_fp), (0, 0, 255), 2)
 
-plt.imshow(img3)
+'''plt.imshow(img3)
 plt.title('FALSE POSITIVE')
-plt.show()
+plt.show()'''
 
 ### BBOXES FALSE NEGATIVES ###
 
 for fn1 in bb_labeled:
-     if len(fn1) < 5:
-         FN.append(fn1)
+     if len(fn1) < 6:
+         Labeled_FN.append(fn1)
      else:
          pass
 
 img4 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
 
-for fn in FN:
+for fn in Labeled_FN:
     x_fn, y_fn, w_fn, h_fn = fn[0], fn[1], fn[2], fn[3]
     cv2.rectangle(img4, (x_fn, y_fn), (w_fn, h_fn), (0, 0, 255), 2)
 
-plt.imshow(img4)
+'''plt.imshow(img4)
 plt.title('FALSE NEGATIVE')
-plt.show()
+plt.show()'''
 
-#print(previsoes)
+# CONFUSION MATRIZ
+
+TP = len(previsao_TP)
+FP = len(previsao_FP)
+FN = len(Labeled_FN)
+
+precision = round(((TP / (TP + FP)) * 100), 0)
+recall = round((TP / (TP + FN) * 100), 0)
+accuracy = round((TP / len(bb_labeled) * 100), 0)
+f1_score = round((2 * (precision * recall / (precision + recall))), 0)
+
+confusion_matriz = []
+confusion_matriz.append([img_name[0], img_name[1],img_name[2], TP, FP, FN, precision, recall, accuracy, f1_score])
+
 #print(previsao_TP)
 #print(previsao_FP)
-#print(FN)
+
+'''print(TP)
+print(FP)
+print(FN)
+print(precision)
+print(recall)
+print(Accuracy)
+print(f1_score)'''
+
+print(confusion_matriz)
 #print(inter)
-
-
 #print(len(inter))
 #print(len(FN))
-#print(previsao_TP)
-#print(bb_predicted)
-
 #print(bb_predicted)
 #print(bb_labeled)
