@@ -3,34 +3,28 @@ import cv2
 import matplotlib.pyplot as plt
 import pandas as pd
 
-#Predicted BBOX
-dir_predicted = '/home/ellentuane/Documents/IC/detected/960/1'
-lines = []
+#PREDICTED BBOX
 
-for filename in os.listdir(dir_predicted):
-    # DETECTED FILE NAME
-    for k in filename:
-        img_name = filename.split("_")
+def predicted_files(dir_predicted, file_predicted):
+    bb_predicted = []
 
-    with open(os.path.join(dir_predicted, filename), "r") as files:
+    img_name = file_predicted.split("_")
+
+    with open(os.path.join(dir_predicted, file_predicted), "r") as files:
         for line in files:
-            lines.append(line)
-
-bb_predicted = []
-box = []
-for i in lines:
-    if i.startswith("person"):
-        j = i.split()
-        j = [e.replace('%', '') for e in j]
-        j = [e.replace(':', '') for e in j]
-        j = [e.replace('(', '') for e in j]
-        j = [e.replace(')', '') for e in j]
-        r = int(j[3]) + int(j[7])
-        b = int(j[5]) + int(j[9])
-        bb_predicted.append([int(j[3]), int(j[5]), r, b, int(j[1])])
-        # bb_predicted = [left_x, top_y, width, height, %]
-    else:
-        pass
+            if line.startswith("person"):
+                j = line.split()
+                j = [e.replace('%', '') for e in j]
+                j = [e.replace(':', '') for e in j]
+                j = [e.replace('(', '') for e in j]
+                j = [e.replace(')', '') for e in j]
+                r = int(j[3]) + int(j[7])
+                b = int(j[5]) + int(j[9])
+                bb_predicted.append([int(j[3]), int(j[5]), r, b, int(j[1]), img_name[1]])
+                # bb_predicted = [left_x, top_y, width, height, %]
+            else:
+                pass
+    return bb_predicted
 
 # OPEN LABELED FILE AND SAVING LINES
 dir_labeled = '/home/ellentuane/Documents/IC/labeled/1'
@@ -44,26 +38,25 @@ for filename in os.listdir(dir_labeled):
 # LABELED BOUNDING BOXES
 
 # IMAGE SIZE
-img = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
-im_h, im_w, _ = img.shape
+def labeled_files(dir_labeled, file_labeled, im_h, im_w):
+    bb_labeled = []
 
-bb_labeled = []
+    with open(os.path.join(dir_labeled, file_labeled), "r") as files_labeled:
+        for line_labeled in files_labeled:
+            # Split string to float
+            _, x, y, w, h = map(float, line_labeled.split(' '))
+            x1 = int((x - w / 2) * im_w)
+            y1 = int((y - h / 2) * im_h)
+            x2 = int((x + w / 2) * im_w)  # r
+            y2 = int((y + h / 2) * im_h)  # b
+            bb_labeled.append([x1, y1, x2, y2, 0])
 
-for l in lines_labeled:
-    # Split string to float
-    _, x, y, w, h = map(float, l.split(' '))
-
-    x1 = int((x - w / 2) * im_w)
-    y1 = int((y - h / 2) * im_h)
-    x2 = int((x + w / 2) * im_w) # r
-    y2 = int((y + h / 2) * im_h) # b
-
-    bb_labeled.append([x1, y1, x2, y2, 0])
+    return bb_labeled
 
 ###     IOU
 
-previsao_TP = []
-previsao_FP = []
+predicted_TP = []
+predicted_FP = []
 Labeled_FN = []
 inter = []
 
@@ -91,12 +84,9 @@ while a < len(bb_predicted):
                 iou = 0
 
             if iou > 50:
-
                 boxA.append(iou)
                 boxB.append(iou)
-                #boxB.append(filename)
-                #boxB.append(img_name[2])
-                previsao_TP.append(boxB)
+                predicted_TP.append(boxB)
                 inter.append([boxA, boxB])
             else:
                 pass
@@ -117,7 +107,7 @@ plt.show()'''
 
 
 ### BBOXES INTERCEPTED
-img2 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
+img2 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_0.jpg')
 
 for i in inter:
     #bb_labeled
@@ -128,27 +118,27 @@ for i in inter:
     xxx, yyy, www, hhh = i[1][0], i[1][1], i[1][2], i[1][3]
     cv2.rectangle(img2, (xxx, yyy), (www, hhh), (255, 0, 0), 2)
 
-'''plt.imshow(img2)
+plt.imshow(img2)
 plt.title('True Positive')
-plt.show()'''
+plt.show()
 
 ### BBOXES FALSE POSITIVES ###
 
 for fp1 in bb_predicted:
      if len(fp1) < 6:
-         previsao_FP.append(fp1)
+         predicted_FP.append(fp1)
      else:
          pass
 
-img3 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
+img3 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_0.jpg')
 
 for fp in previsao_FP:
     x_fp, y_fp, w_fp, h_fp = fp[0], fp[1], fp[2], fp[3]
     cv2.rectangle(img3, (x_fp, y_fp), (w_fp, h_fp), (0, 0, 255), 2)
 
-'''plt.imshow(img3)
+plt.imshow(img3)
 plt.title('FALSE POSITIVE')
-plt.show()'''
+plt.show()
 
 ### BBOXES FALSE NEGATIVES ###
 
@@ -158,15 +148,15 @@ for fn1 in bb_labeled:
      else:
          pass
 
-img4 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_270.jpg')
+img4 = cv2.imread('/home/ellentuane/Documents/IC/image/Aerial_City_0.jpg')
 
 for fn in Labeled_FN:
     x_fn, y_fn, w_fn, h_fn = fn[0], fn[1], fn[2], fn[3]
     cv2.rectangle(img4, (x_fn, y_fn), (w_fn, h_fn), (0, 0, 255), 2)
 
-'''plt.imshow(img4)
+plt.imshow(img4)
 plt.title('FALSE NEGATIVE')
-plt.show()'''
+plt.show()
 
 # CONFUSION MATRIZ
 
@@ -182,6 +172,12 @@ f1_score = round((2 * (precision * recall / (precision + recall))), 0)
 confusion_matriz = []
 confusion_matriz.append([img_name[0], img_name[1],img_name[2], TP, FP, FN, precision, recall, accuracy, f1_score])
 
+# DATA FRAME
+
+'''df = pd.DataFrame(confusion_matriz, columns=['frame', 'net_size', 'TP', 'FP', 'FN', 'precision', 'recall', 'accuracy', 'f1_score'])
+
+df.to_csv('YOLO_confusion_matriz_.csv')'''
+
 #print(previsao_TP)
 #print(previsao_FP)
 
@@ -193,7 +189,7 @@ print(recall)
 print(Accuracy)
 print(f1_score)'''
 
-print(confusion_matriz)
+#print(confusion_matriz)
 #print(inter)
 #print(len(inter))
 #print(len(FN))
