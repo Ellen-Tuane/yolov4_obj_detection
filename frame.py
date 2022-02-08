@@ -7,18 +7,18 @@ class Frame:
         pass
 
     @staticmethod
-    def create_dir(path):
+    def create_dir(input_path, output_path):
+        name = input_path.split("/")[-1].split(".")[0]
+        save_path = os.path.join(output_path, name)
         try:
-            if not os.path.exists(path):
-                os.makedirs(path)
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
         except OSError:
-            print(f"ERROR: creating directory with name {path}")
+            print(f"ERROR: creating directory with name {save_path}")
+        return save_path, name
 
     @staticmethod
-    def save_frame(video_path, save_dir, gap, frame, idx):
-        name = video_path.split("/")[-1].split(".")[0]
-        save_path = os.path.join(save_dir, name)
-        Frame.create_dir(save_path)
+    def save_frame(save_path, name, gap, frame, idx):
         if idx == 0:
             cv2.imwrite(f"{save_path}/{name}_{idx}_.jpg", frame)
         else:
@@ -29,13 +29,13 @@ class Frame:
     def video_frame(video_path, save_dir, gap):
         cap = cv2.VideoCapture(video_path)
         idx = 0
+        save_path, name = Frame.create_dir(video_path, save_dir)
         while True:
             ret, frame = cap.read()
             if ret:
-                Frame.save_frame(video_path, save_dir, gap, frame, idx)
+                Frame.save_frame(save_path, name, gap, frame, idx)
             else:
                 cap.release()
                 break
             idx += 1
 
-        return False

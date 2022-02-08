@@ -100,7 +100,7 @@ def confusion_matriz(predicted_TP, predicted_FP, labeled_FN, labeled_gt):
 
 
 save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz/'
-predicted = r'/home/ellentuane/Documents/IC/detected/todos/'
+predicted = r'/home/ellentuane/Documents/IC/detected/todos'
 labeled = '/home/ellentuane/Documents/IC/labeled/'
 dir_img = '/home/ellentuane/Documents/IC/image/input'
 confusion_matriz_result = []

@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from bounding_boxes import BoundingBoxes
 from yolo_predictions import YoloPredictions
+import pandas as pd
 
 
 save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz/'
@@ -27,12 +28,25 @@ if use_gpu == 1:
 layer_names = net.getLayerNames()
 layer_names = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
+df = pd.DataFrame(columns=['boxes', 'confidences', 'classID'])
+df.to_csv('/home/ellentuane/Documents/IC/output_confusion_matriz/predictions.csv', index=False)
+
+predict = []
 stop = 0
 i = 0
 while True:
     if stop == 0:
         ret, frame = cap.read()
         if ret:
-            #net, layer_names, image, confidence, threshold, net_height, net_width
-            boxes, confidences, classIDs, idxs = YoloPredictions.make_prediction(net, layer_names, frame, 0.01, 0.03, 960, 960)
+            boxes, confidences, classIDs, idxs = YoloPredictions.make_prediction(net, layer_names, frame, 0.01, 0.03,
+                                                                                 960, 960)
+            for box in boxes:
+               for conf in confidences:
+                   for id in classIDs:
+                       with open('/home/ellentuane/Documents/IC/output_confusion_matriz/predictions.csv', 'a') as fd:
+                           fd.write(box, conf, id, )
+
+        i += 1
+
+
 

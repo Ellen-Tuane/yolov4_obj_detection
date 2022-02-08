@@ -6,6 +6,7 @@ class ConfusionMatriz:
         # for which IoU < α
         self.false_negative = int(false_negative)  #This is an actual instance that is not detected by the classifier
 
+    #this function needs the (left_x1, top_y1, left_x2, top_y2) bbox configuration to work correctly
     @staticmethod
     def intersection_over_union(bbox_a, bbox_b):
         xA = max(bbox_a[0], bbox_b[0])

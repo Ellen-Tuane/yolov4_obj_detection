@@ -41,30 +41,24 @@ def bb_labeled(dir_labeled, file_label, im_height, im_width):
     return bbox_label
 
 
-save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz/'
-predicted = r'/home/ellentuane/Documents/IC/detected/todos/'
-labeled = '/home/ellentuane/Documents/IC/labeled/'
-dir_img = '/home/ellentuane/Documents/IC/image/input'
+save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz/city'
+predicted = '/home/ellentuane/Documents/IC/output_confusion_matriz/city/city_frame_detections_results'
+labeled = '/home/ellentuane/Documents/IC/output_confusion_matriz/city/city_labels'
+dir_img = '/home/ellentuane/Documents/IC/output_confusion_matriz/city/city_frame'
 confusion_matriz_result = []
 
 count = 0
 while count < len(os.listdir(predicted)):
-
     for file_predicted in os.listdir(predicted):
-        f_p = file_predicted.split("_")
-
+        predicted_name = file_predicted.split("_")[:3]
         for file_labeled in os.listdir(labeled):
-            fl = file_labeled.split("_")
-            fl = [t.replace('.txt', '') for t in fl]
-            fl = fl[2]
-
-            if f_p[1] != fl:
+            label_name = file_labeled.split("_")[1]
+            if predicted_name[1] != label_name:
                 pass
             else:
                 for frame in os.listdir(dir_img):
-                    fr = frame.split("_")
-                    fr = fr[2]
-                    if fl != fr:
+                    frame_name = frame.split("_")[-2]
+                    if label_name != frame_name:
                         pass
                     else:
                         detected = bb_predicted(predicted, file_predicted)
@@ -78,30 +72,20 @@ while count < len(os.listdir(predicted)):
 
                         cm = ConfusionMatrizMetrics.confusionMatrixMetrics(len(tp), len(fp), len(fn), len(ground_truth))
 
-                        confusion_matriz_result.append([fr, f_p[2], len(tp), len(fp), len(fn), cm.precision, cm.recall, cm.accuracy, cm.f1_score,
+                        confusion_matriz_result.append([frame_name, predicted_name[2], len(tp), len(fp), len(fn),
+                                                        cm.precision, cm.recall, cm.accuracy, cm.f1_score,
                                                         len(detected), len(ground_truth)])
-
-                        for xx in tp:
-                            img1 = cv2.rectangle(img, (xx[0][0], xx[0][1]), (xx[0][2], xx[0][3]), (255, 255, 0), 2)
-                            img1 = cv2.rectangle(img, (xx[1][0], xx[1][1]), (xx[1][2], xx[1][3]), (0, 255, 0), 2)
-
-                        for yy in fp:
-                            img1 = cv2.rectangle(img, (yy[0], yy[1]), (yy[2], yy[3]), (0, 0, 255), 2)
-
-                        for o in fn:
-                            img1 = cv2.rectangle(img, (o[0], o[1]), (o[2], o[3]), (255, 0, 255), 2)
-
-                        cv2.imwrite(f"{save_path}/{f_p[2]}_{frame}", img1)
-
-
+                        tp1 = []
+                        for tps in tp:
+                            tp1.append(tps[1])
+                        img = BoundingBoxes.draw_bounding_boxes_confusion_matriz(img, ground_truth, (0, 100, 0))
+                        img = BoundingBoxes.draw_bounding_boxes_confusion_matriz(img, tp1, (0, 255, 0))
+                        img = BoundingBoxes.draw_bounding_boxes_confusion_matriz(img, fp, (255, 0, 0))
+                        img = BoundingBoxes.draw_bounding_boxes_confusion_matriz(img, fn, (0, 0, 255))
+                        predicted_name = '_'.join(predicted_name)
+                        cv2.imwrite(f"{save_path}/{predicted_name}.jpg", img)
                         break
                 count += 1
-
-
-
-
-
 df = pd.DataFrame(confusion_matriz_result, columns=['frame', 'net_size', 'TP', 'FP', 'FN', 'precision', 'recall',
                                                     'accuracy', 'f1_score', 'total_detected', 'total_labeled'])
-df.to_csv('/home/ellentuane/Documents/IC/output_confusion_matriz/YOLO_confusion_matriz_.csv', index=False)
-
+df.to_csv(f"{save_path}/soccer_confusion_matriz_.csv", index=False)

@@ -4,7 +4,7 @@ from bounding_boxes import BoundingBoxes
 from yolo_predictions import YoloPredictions
 from frame import Frame
 
-save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz/'
+save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz'
 video_path = '/home/ellentuane/Documents/IC/videos/Aerial_City.mp4'
 labels_path = '/home/ellentuane/Documents/IC/coco.names'
 cfg_path = '/home/ellentuane/Documents/IC/yolov4.cfg'
@@ -37,11 +37,12 @@ while True:
         ret, frame = cap.read()
         if ret:
             #net, layer_names, image, confidence, threshold, net_height, net_width
-            boxes, confidences, classIDs, idxs = YoloPredictions.make_prediction(net, layer_names, frame, 0.01, 0.03, 960, 960)
+            boxes, confidences, classIDs, idxs = YoloPredictions.make_prediction(net, layer_names, frame,
+                                                                                 0.01, 0.03, 960, 960)
             frame = BoundingBoxes.draw_bounding_boxes(frame, labels, boxes, confidences, classIDs, idxs, colors)
 
-            Frame.save_frame(video_path, save_path, 30, frame, i)
-            cv2.imshow('frame', frame)
+            '''Frame.save_frame(video_path, save_path, 30, frame, i)
+            cv2.imshow('frame', frame)'''
         i += 1
 
     key = cv2.waitKey(1) & 0xFF
