@@ -5,7 +5,7 @@ from yolo_predictions import YoloPredictions
 from frame import Frame
 
 save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz'
-video_path = '/home/ellentuane/Documents/IC/videos/Aerial_City.mp4'
+video_path = '/home/ellentuane/Documents/IC/videos/test.mp4'
 labels_path = '/home/ellentuane/Documents/IC/coco.names'
 cfg_path = '/home/ellentuane/Documents/IC/yolov4.cfg'
 weight_path = '/home/ellentuane/Documents/IC/yolov4.weights'
@@ -19,16 +19,15 @@ colors = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
 # yolo weights and cfg configuration files
 net = cv2.dnn.readNetFromDarknet(cfg_path, weight_path)
 
-cap = cv2.VideoCapture(video_path)
-
 use_gpu = 0
 if use_gpu == 1:
     net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
     net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
 # Obter o nome das categorias
-layer_names = net.getLayerNames()
-layer_names = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+layer_names = YoloPredictions.layer_name(net)
+
+cap = cv2.VideoCapture(video_path)
 
 stop = 0
 i = 0
@@ -39,13 +38,16 @@ while True:
             #net, layer_names, image, confidence, threshold, net_height, net_width
             boxes, confidences, classIDs, idxs = YoloPredictions.make_prediction(net, layer_names, frame,
                                                                                  0.01, 0.03, 960, 960)
-            frame = BoundingBoxes.draw_bounding_boxes(frame, labels, boxes, confidences, classIDs, idxs, colors)
+            for class_id, score, bbox in zip(classIDs, confidences, boxes):
+                x, y, w, h = bbox
+                name = labels[class_id]
+                if name == 'person':
+                    frame = BoundingBoxes.draw_bounding_boxes(frame, name, boxes, confidences, classIDs, idxs, colors)
 
-            '''Frame.save_frame(video_path, save_path, 30, frame, i)
-            cv2.imshow('frame', frame)'''
+            cv2.imshow('frame', frame)
         i += 1
 
-    key = cv2.waitKey(1) & 0xFF
+    key = cv2.waitKey(30) & 0xFF
     if key == ord('s'):
         stop = not stop
     if key == ord('q'):

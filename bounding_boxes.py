@@ -13,30 +13,56 @@ import numpy as np
 
 class BoundingBoxes:
     # constructor method
-    def __init__(self, x1, y1, x2, y2):
-        self.left_x1 = int(x1)
-        self.top_y1 = int(y1)
-        self.left_x2 = int(x2)
-        self.top_y2 = int(y2)
+    def __init__(self, x, y, width, height):
+        self.left_x = int(x)
+        self.top_y = int(y)
+        self.width = int(width)
+        self.height = int(height)
 
-    @classmethod
-    def bbox_coordinates_to_rectangle(cls, left_x1, top_y1, width, height):
+    def get_x(self):
+        return self.left_x
+
+    def get_y(self):
+        return self.top_y
+
+    def get_width(self):
+        return self.width
+
+    def get_height(self):
+        return self.height
+
+    def set_x(self, x):
+        self.left_x = int(x)
+
+    def set_y(self, y):
+        self.top_y = int(y)
+
+    def set_width(self, width):
+        self.width = int(width)
+
+    def set_height(self, height):
+        self.height = int(height)
+
+    @staticmethod
+    def bbox_to_rectangle(x, y, width, height):
         # this method consists in convert coordinates format like (left_x1, top_y1, width, height)
         # into coordinate necessary to draw a bbox on an image using opencv.
         # left_x1 + rectangle_width
-        left_x2 = left_x1 + width
+        right_x2 = x + width
         # top_y1 + rectangle height
-        top_y2 = top_y1 + height
-        return BoundingBoxes(left_x1, top_y1, left_x2, top_y2)
+        bottom_y2 = y + height
+        return x, y, right_x2, bottom_y2
 
     @classmethod
-    def yolo_annotation_to_rectangle(cls, x, y, w, h, image_height, image_width):
+    def yolo_annotation_to_bbox(cls, x, y, w, h, image_height, image_width):
         # convert yolo bounding boxes annotations into bbox annotation for opencv
         left_x1 = int((x - w / 2) * image_width)
         top_y1 = int((y - h / 2) * image_height)
-        left_x2 = int((x + w / 2) * image_width)
-        top_y2 = int((y + h / 2) * image_height)
-        return BoundingBoxes(left_x1, top_y1, left_x2, top_y2)
+        right_x2 = int((x + w / 2) * image_width)
+        bottom_y2 = int((y + h / 2) * image_height)
+        width = right_x2 - left_x1
+        height = bottom_y2 - top_y1
+        return BoundingBoxes(left_x1, top_y1, width, height)
 
     @staticmethod
     def extract_boxes_confidences_class_ids(outputs, confidence, width, height):
@@ -78,7 +104,7 @@ class BoundingBoxes:
                 # draw the bounding box and labels on the image
                 color = [int(c) for c in colors[classids[i]]]
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
-                text = "{}: {:.4f}".format(labels[classids[i]], confidences[i])
+                text = "{}: {:.2f}".format(labels[classids[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         return image
@@ -88,10 +114,10 @@ class BoundingBoxes:
         if len(boxes) > 0:
             for i in boxes:
                 # extract bounding box coordinates
-                x1, y1 = i[0], i[1]
-                x2, y2 = i[2], i[3]
+                x, y = i[0], i[1]
+                w, h = i[2], i[3]
                 # draw the bounding box and labels on the image
-                cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
+                cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
         return image
 
 
