@@ -1,8 +1,7 @@
 import cv2
 import numpy as np
-from bounding_boxes import BoundingBoxes
-from yolo_predictions import YoloPredictions
-from frame import Frame
+from model_performance.bounding_boxes import BoundingBoxes
+from Detections.yolo_predictions import YoloPredictions
 
 save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz'
 video_path = '/home/ellentuane/Documents/IC/videos/test.mp4'

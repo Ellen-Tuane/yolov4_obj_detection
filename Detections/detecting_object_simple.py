@@ -1,5 +1,5 @@
 import cv2
-from yolo_predictions import YoloPredictions
+from Detections.yolo_predictions import YoloPredictions
 
 
 save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz'

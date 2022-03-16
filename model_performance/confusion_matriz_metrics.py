@@ -1,6 +1,3 @@
-from confusion_matriz import ConfusionMatriz
-
-
 class ConfusionMatrizMetrics:
 
     def __init__(self, precision, recall, accuracy, f1_score):

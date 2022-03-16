@@ -1,5 +1,5 @@
 import cv2
-from bounding_boxes import BoundingBoxes
+from model_performance.bounding_boxes import BoundingBoxes
 from pre_processing import PreProcess
 
 

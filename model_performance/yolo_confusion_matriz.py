@@ -1,8 +1,8 @@
 import os
 import cv2
-from bounding_boxes import BoundingBoxes
-from confusion_matriz import ConfusionMatriz
-from confusion_matriz_metrics import ConfusionMatrizMetrics
+from model_performance.bounding_boxes import BoundingBoxes
+from model_performance.confusion_matriz import ConfusionMatriz
+from model_performance.confusion_matriz_metrics import ConfusionMatrizMetrics
 import pandas as pd
 
 
