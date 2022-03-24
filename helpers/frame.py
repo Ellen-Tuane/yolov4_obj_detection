@@ -39,3 +39,12 @@ class Frame:
                 break
             idx += 1
 
+    @staticmethod
+    def rescaleFrame(frame, scale=0.75):
+        # images, video and live videos
+        height = int(frame.shape[0] * scale)
+        width = int(frame.shape[1] * scale)
+        dimensions = (width, height)
+
+        return cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
+

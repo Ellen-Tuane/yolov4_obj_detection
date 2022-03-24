@@ -104,8 +104,8 @@ class BoundingBoxes:
                 # draw the bounding box and labels on the image
                 color = [int(c) for c in colors[classids[i]]]
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
-                text = "{}: {:.2f}".format(labels[classids[i]], confidences[i])
-                cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                #text = "{}: {:.2f}%".format(labels[classids[i]], confidences[i]*100)
+               # cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         return image
 

@@ -1,6 +1,6 @@
 import cv2
 from model_performance.bounding_boxes import BoundingBoxes
-from pre_processing import PreProcess
+from Detections.pre_processing import PreProcess
 
 
 class YoloPredictions:

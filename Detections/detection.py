@@ -3,11 +3,11 @@ import numpy as np
 from model_performance.bounding_boxes import BoundingBoxes
 from Detections.yolo_predictions import YoloPredictions
 
-save_path = '/home/ellentuane/Documents/IC/output_confusion_matriz'
-video_path = '/home/ellentuane/Documents/IC/videos/test.mp4'
+save_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/distance_estimation_reference/'
+video_path = '/home/ellentuane/Downloads/test_distancia_horizontal.mp4'
 labels_path = '/home/ellentuane/Documents/IC/coco.names'
-cfg_path = '/home/ellentuane/Documents/IC/yolov4.cfg'
-weight_path = '/home/ellentuane/Documents/IC/yolov4.weights'
+cfg_path = '/home/ellentuane/Documents/IC/yolov4-tiny.cfg'
+weight_path = '/home/ellentuane/Documents/IC/yolov4-tiny.weights'
 
 # .names files with the object's names
 labels = open(labels_path).read().strip().split('\n')
@@ -44,6 +44,7 @@ while True:
                     frame = BoundingBoxes.draw_bounding_boxes(frame, name, boxes, confidences, classIDs, idxs, colors)
 
             cv2.imshow('frame', frame)
+            print(boxes)
         i += 1
 
     key = cv2.waitKey(30) & 0xFF
