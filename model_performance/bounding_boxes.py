@@ -91,7 +91,7 @@ class BoundingBoxes:
                     confidences.append(float(conf))
                     classIDs.append(classID)
 
-        return boxes, confidences, classIDs
+        return [boxes, confidences, classIDs]
 
     @staticmethod
     def draw_bounding_boxes(image, labels, boxes, confidences, classids, idxs, colors):
@@ -104,9 +104,6 @@ class BoundingBoxes:
                 # draw the bounding box and labels on the image
                 color = [int(c) for c in colors[classids[i]]]
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
-                #text = "{}: {:.2f}%".format(labels[classids[i]], confidences[i]*100)
-               # cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-
         return image
 
     @staticmethod
@@ -117,6 +114,7 @@ class BoundingBoxes:
                 x, y = i[0], i[1]
                 w, h = i[2], i[3]
                 # draw the bounding box and labels on the image
+
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
         return image
 
