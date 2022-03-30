@@ -3,8 +3,8 @@ import numpy as np
 from model_performance.bounding_boxes import BoundingBoxes
 from Detections.yolo_predictions import YoloPredictions
 
-save_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/distance_estimation_reference/'
-video_path = '/home/ellentuane/Downloads/test_distancia_horizontal.mp4'
+save_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/'
+video_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/test_distancia_horizontal.mp4'
 labels_path = '/home/ellentuane/Documents/IC/coco.names'
 cfg_path = '/home/ellentuane/Documents/IC/yolov4-tiny.cfg'
 weight_path = '/home/ellentuane/Documents/IC/yolov4-tiny.weights'
@@ -42,9 +42,10 @@ while True:
                 name = labels[class_id]
                 if name == 'person':
                     frame = BoundingBoxes.draw_bounding_boxes(frame, name, boxes, confidences, classIDs, idxs, colors)
-
-            cv2.imshow('frame', frame)
-            print(boxes)
+                cv2.imshow('frame', frame)
+        else:
+            print('Video has ended, failed or wrong path was given, try a different video format!')
+            break
         i += 1
 
     key = cv2.waitKey(30) & 0xFF
@@ -52,5 +53,6 @@ while True:
         stop = not stop
     if key == ord('q'):
         break
+
 
 cv2.destroyAllWindows()
