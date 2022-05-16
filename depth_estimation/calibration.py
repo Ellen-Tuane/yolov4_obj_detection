@@ -3,14 +3,14 @@ import numpy as np
 import os
 import glob
 # Define images path and matrix saving path
-path = 'depth_estimation/images'
+path = 'depth_estimation/images/'
 save_path = 'depth_estimation/calibration_parameters'
 
 # Define the dimensions of checkerboard
 CHECKERBOARD = (9, 6)
 
 # Set image type
-images = glob.glob('depth_estimation/images/*.HEIC') # set image type (.png, .jpg, .jpeg, .HEIC, ...)
+images = glob.glob('*.HEIC') # set image type (.png, .jpg, .jpeg, .HEIC, ...)
 
 #check if images were loaded
 print(f"Total images loaded {images}")
@@ -92,7 +92,7 @@ for i in range(len(objectp3d)):
     imgpoints, _ = cv2.projectPoints(objectp3d[i], r_vecs[i], t_vecs[i], matrix, distortion)
     error = cv2.norm(objectp3d[i], imgpoints, cv2.NORM_L2)/len(imgpoints)
     mean_error += error
-    total_error = mean_error/len(objectp3d)
 
+total_error = mean_error/len(objectp3d)
 print( "total error: {}".format(mean_error/len(objectp3d)))
 np.save('depth_estimation/calibration_parameters/total_error.npy', total_error)
