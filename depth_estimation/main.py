@@ -3,14 +3,18 @@ import undistort
 import triangulation
 import numpy as np
 
+#
+matrix_path ='/home/ellentuane/Documents/IC/yolov4_obj_detection/depth_estimation/calibration_parameters/matrix.npy'
+dist_path = '/home/ellentuane/Documents/IC/yolov4_obj_detection/depth_estimation/calibration_parameters/distortion.npy '
+
 # Open both cameras
-cap_right = cv2.imread('/home/ellentuane/Documents/IC/yolov4_obj_detection/helpers/output/horizontal_01_right/horizontal_01_right_510_.jpg')
-cap_left = cv2.imread('/home/ellentuane/Documents/IC/yolov4_obj_detection/helpers/output/horizontal_01_left/horizontal_01_left_730_.jpg')
+cap_right = cv2.imread('/home/ellentuane/Documents/IC/yolov4_obj_detection/helpers/output/right_5cm/right_5cm_570_.jpg')
+cap_left = cv2.imread('/home/ellentuane/Documents/IC/yolov4_obj_detection/helpers/output/Left_0/Left_0_900_.jpg')
 
 frame_rate = 120  # Camera frame rate (maximum at 120 fps)
 
 B = 5  # Distance between the cameras [cm]
-fl_right = 6  # right camera focal length [px]
+fl = 3104.4  # right camera focal length [px]
 alpha = 56.6  # Camera field of view in the horizontal plane [degrees]
 
 # Initial values
