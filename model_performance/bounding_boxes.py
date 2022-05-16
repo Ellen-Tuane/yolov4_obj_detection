@@ -114,7 +114,6 @@ class BoundingBoxes:
                 x, y = i[0], i[1]
                 w, h = i[2], i[3]
                 # draw the bounding box and labels on the image
-
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
         return image
 

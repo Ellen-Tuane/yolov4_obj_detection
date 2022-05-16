@@ -1,7 +1,7 @@
 from frame import Frame
 
-save_path = '/home/ellentuane/Documents/IC/videos/experimento_janela/'
-video_path = '/home/ellentuane/Documents/IC/videos/experimento_janela/IMG_6598_30.mp4'
+save_path = '/home/ellentuane/Documents/IC/yolov4_obj_detection/helpers/output/'
+video_path = '/home/ellentuane/Documents/IC/videos/stereo_left_camera/horizontal_01_left.mp4'
 
-Frame.video_frame(video_path, save_path, 30)
+Frame.video_frame(video_path, save_path, 10)
 

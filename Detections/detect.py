@@ -3,6 +3,7 @@ import numpy as np
 from model_performance.bounding_boxes import BoundingBoxes
 from Detections.yolo_predictions import YoloPredictions
 
+
 save_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/'
 video_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/test_distancia_horizontal.mp4'
 labels_path = '/home/ellentuane/Documents/IC/coco.names'

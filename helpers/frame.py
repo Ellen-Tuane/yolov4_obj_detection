@@ -40,11 +40,17 @@ class Frame:
             idx += 1
 
     @staticmethod
-    def rescaleFrame(frame, scale=0.75):
+    def rescale_frame(frame, scale=0.75):
         # images, video and live videos
         height = int(frame.shape[0] * scale)
         width = int(frame.shape[1] * scale)
         dimensions = (width, height)
 
         return cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
+
+    @staticmethod
+    def line_distance(frame, center_point, end_point):
+        img = cv2.circle(frame, center_point, 20, (0, 0, 255), 1)
+        img = cv2.line(img, center_point, end_point, (0, 0, 255), 1)
+        return img
 
