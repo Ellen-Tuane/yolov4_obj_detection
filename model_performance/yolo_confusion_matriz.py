@@ -17,10 +17,10 @@ def bb_predicted(dir_predicted, file_pred):
                 j = [e.replace(':', '') for e in j]
                 j = [e.replace('(', '') for e in j]
                 j = [e.replace(')', '') for e in j]
-                rectangle_predicted = BoundingBoxes.bbox_coordinates_to_rectangle(int(j[3]), int(j[5]),
+                rectangle_predicted = BoundingBoxes.bbox_to_rectangle(int(j[3]), int(j[5]),
                                                                                   int(j[7]), int(j[9]))
-                bbox_pred.append([rectangle_predicted.left_x1, rectangle_predicted.top_y1, rectangle_predicted.left_x2,
-                                  rectangle_predicted.top_y2])
+                bbox_pred.append([rectangle_predicted[0], rectangle_predicted[1], rectangle_predicted[2],
+                                  rectangle_predicted[3]])
                 #[left_x, top_y, width, height]
             else:
                 pass
@@ -34,9 +34,9 @@ def bb_labeled(dir_labeled, file_label, im_height, im_width):
         for line_labeled in files_labeled:
             # Split string to float
             _, x, y, w, h = map(float, line_labeled.split(' '))
-            rectangle_labeled = BoundingBoxes.yolo_annotation_to_rectangle(x, y, w, h, im_height, im_width)
-            bbox_label.append([rectangle_labeled.left_x1, rectangle_labeled.top_y1,
-                              rectangle_labeled.left_x2, rectangle_labeled.top_y2])
+            rectangle_labeled = BoundingBoxes.yolo_annotation_to_bbox(x, y, w, h, im_height, im_width)
+            bbox_label.append([rectangle_labeled[0], rectangle_labeled[1],
+                              rectangle_labeled[2], rectangle_labeled[2]])
 
     return bbox_label
 

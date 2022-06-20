@@ -1,32 +1,10 @@
 import cv2
+import numpy as np
+import os
 from model_performance.bounding_boxes import BoundingBoxes
 from Detections.pre_processing import PreProcess
 
-
 class YoloPredictions:
-    def __init__(self, class_id, score, bbox):
-        self.class_id = class_id
-        self.score = score
-        self.bbox = bbox
-
-    def set_class_id(self, class_id):
-        self.class_id = class_id
-
-    def get_class_id(self):
-        return self.class_id
-
-    def set_score(self, score):
-        self.score = score
-
-    def get_score(self):
-        return self.score
-
-    def set_bbox(self, bbox):
-        self.bbox = bbox
-
-    def get_bbox(self):
-        return self.bbox
-
     @staticmethod
     def make_prediction(net, layer_names, image, confidence, threshold, net_height, net_width):
         height, width = image.shape[:2]

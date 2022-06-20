@@ -3,14 +3,14 @@ import numpy as np
 from model_performance.bounding_boxes import BoundingBoxes
 from Detections.yolo_predictions import YoloPredictions
 
-save_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/'
-video_path = '/home/ellentuane/Documents/IC/videos/distance_estimation/test_distancia_horizontal.mp4'
-labels_path = '/home/ellentuane/Documents/IC/coco.names'
-cfg_path = '/home/ellentuane/Documents/IC/yolov4-tiny.cfg'
-weight_path = '/home/ellentuane/Documents/IC/yolov4-tiny.weights'
+save_path = '/Detections/saved_videos'
+video_path = 'Detections/videos/ + video name'
+classes_path = 'Detections/classes/coco.names'
+cfg_path = 'Detections/cfg/yolov4-tiny.cfg'
+weight_path = 'Detections/weights/yolov4-tiny.weights'
 
 # .names files with the object's names
-labels = open(labels_path).read().strip().split('\n')
+labels = open(classes_path).read().strip().split('\n')
 
 # Random colors for each object category
 colors = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')

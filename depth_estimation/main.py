@@ -2,40 +2,50 @@ import cv2
 import undistort
 import triangulation
 import numpy as np
+from Detections.yolo_predictions import YoloPredictions
 
-#
-matrix_path ='/home/ellentuane/Documents/IC/yolov4_obj_detection/depth_estimation/calibration_parameters/matrix.npy'
-dist_path = '/home/ellentuane/Documents/IC/yolov4_obj_detection/depth_estimation/calibration_parameters/distortion.npy '
+# Camera parameters path
+matrix_path ='depth_estimation/calibration_parameters/matrix.npy'
+dist_path = 'depth_estimation/calibration_parameters/distortion.npy'
 
-# Open both cameras
-cap_right = cv2.imread('/home/ellentuane/Documents/IC/yolov4_obj_detection/helpers/output/right_5cm/right_5cm_570_.jpg')
-cap_left = cv2.imread('/home/ellentuane/Documents/IC/yolov4_obj_detection/helpers/output/Left_0/Left_0_900_.jpg')
+# setting images path
+save_path = 'depth_estimation/output'
+image_right = 'helpers/output/right_5cm/right_5cm_570_.jpg'
+image_left ='helpers/output/Left_0/Left_0_900_.jpg'
 
-frame_rate = 120  # Camera frame rate (maximum at 120 fps)
+# YOLO parameters
+classes_path = 'Detections/classes/coco.names'
+cfg_path = 'Detections/cfg/yolov4-tiny.cfg'
+weight_path = 'Detections/weights/yolov4-tiny.weights'
+labels = open(classes_path).read().strip().split('\n')
+colors = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
+net = cv2.dnn.readNetFromDarknet(cfg_path, weight_path)
+layer_names = YoloPredictions.layer_name(net)
 
+# Stereo vision parameters
 B = 5  # Distance between the cameras [cm]
 fl = 3104.4  # right camera focal length [px]
-alpha = 56.6  # Camera field of view in the horizontal plane [degrees]
+
+# Open both cameras
+cap_right = cv2.imread(image_right)
+cap_left = cv2.imread(image_left)
 
 # Initial values
 count = -1
-
-while (True):
+while True:
     count += 1
 
-    ################## CALIBRATION #########################################################
-
+    # Undistortion
     frame_right = undistort.undistorted(cap_right, matrix_path, dist_path)
     frame_left = undistort.undistorted(cap_right, matrix_path, dist_path)
-
-    ########################################################################################
 
     # If cannot catch any frame, break
     if cap_right == False or cap_left == False:
         break
-
     else:
         # APPLY YOLO DETECTION AND RETURN BBOX CENTER
+
+
 
         ################## CALCULATING BALL DEPTH #########################################################
 
@@ -73,3 +83,4 @@ cap_right.release()
 cap_left.release()
 
 cv2.destroyAllWindows()
+'''

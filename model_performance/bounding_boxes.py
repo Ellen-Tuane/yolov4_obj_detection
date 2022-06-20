@@ -53,8 +53,8 @@ class BoundingBoxes:
         bottom_y2 = y + height
         return x, y, right_x2, bottom_y2
 
-    @classmethod
-    def yolo_annotation_to_bbox(cls, x, y, w, h, image_height, image_width):
+    @staticmethod
+    def yolo_annotation_to_bbox(x, y, w, h, image_height, image_width):
         # convert yolo bounding boxes annotations into bbox annotation for opencv
         left_x1 = int((x - w / 2) * image_width)
         top_y1 = int((y - h / 2) * image_height)
@@ -62,7 +62,7 @@ class BoundingBoxes:
         bottom_y2 = int((y + h / 2) * image_height)
         width = right_x2 - left_x1
         height = bottom_y2 - top_y1
-        return BoundingBoxes(left_x1, top_y1, width, height)
+        return left_x1, top_y1, width, height
 
     @staticmethod
     def extract_boxes_confidences_class_ids(outputs, confidence, width, height):
